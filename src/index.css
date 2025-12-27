@@ -1,0 +1,415 @@
+/* Import must come first */
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Terminal/CLI Theme - Dark Green on Black */
+
+@layer base {
+  :root {
+    /* Classic Terminal Theme (white accents) */
+    --background: 0 0% 3%; /* near-black */
+    --foreground: 0 0% 100%; /* white text */
+
+    --card: 0 0% 12% / 0.6;
+    --card-foreground: 0 0% 100%;
+
+    --popover: 0 0% 12%;
+    --popover-foreground: 0 0% 100%;
+
+    /* Primary white */
+    --primary: 0 0% 100%;
+    --primary-foreground: 0 0% 3%;
+
+    --secondary: 0 0% 10%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 0 0% 25%;
+    --muted-foreground: 0 0% 45%;
+
+    /* Keep accent amber/yellow for highlights */
+    --accent: 45 100% 55%;
+    --accent-foreground: 0 0% 3%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 0 0% 100% / 0.18;
+    --input: 0 0% 10%;
+    --ring: 0 0% 100%;
+
+    --radius: 0.25rem;
+
+    /* Terminal Tokens */
+    --terminal-scanline: repeating-linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0.01),
+      rgba(255, 255, 255, 0.01) 1px,
+      transparent 1px,
+      transparent 2px
+    );
+    --terminal-glow: 0 0 12px rgba(255, 255, 255, 0.12);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+    font-family: "JetBrains Mono", monospace;
+  }
+
+  body {
+    @apply text-foreground antialiased;
+    font-family: "JetBrains Mono", monospace;
+    background-color: hsl(var(--background));
+    background-image: var(--terminal-scanline);
+    position: relative;
+    min-height: 100vh;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Terminal cursor blink */
+  @keyframes blink {
+    0%,
+    49% {
+      opacity: 1;
+    }
+    50%,
+    100% {
+      opacity: 0;
+    }
+  }
+
+  @keyframes scan-lines {
+    0% {
+      transform: translateY(0);
+    }
+    100% {
+      transform: translateY(10px);
+    }
+  }
+
+  @keyframes flicker {
+    0% {
+      opacity: 0.97;
+    }
+    5% {
+      opacity: 0.9;
+    }
+    10% {
+      opacity: 0.99;
+    }
+    15% {
+      opacity: 0.95;
+    }
+    20% {
+      opacity: 1;
+    }
+    24%,
+    100% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes type {
+    from {
+      width: 0;
+    }
+  }
+
+  @keyframes glow-flicker {
+    0%,
+    18%,
+    22%,
+    25%,
+    54%,
+    56%,
+    100% {
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.38);
+    }
+    20%,
+    24%,
+    100% {
+      text-shadow: 0 0 5px rgba(255, 255, 255, 0.18);
+    }
+  }
+
+  /* Added missing fade-in-up animation */
+  @keyframes fade-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Added missing card-shimmer animation */
+  @keyframes card-shimmer {
+    0% {
+      background-position: -1000px 0;
+    }
+    100% {
+      background-position: 1000px 0;
+    }
+  }
+
+  /* Added missing glow-pulse animation */
+  @keyframes glow-pulse-animation {
+    0%,
+    100% {
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.12);
+    }
+    50% {
+      box-shadow: 0 0 40px rgba(255, 255, 255, 0.22);
+    }
+  }
+}
+
+@layer components {
+  .section-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4;
+  }
+
+  /* Terminal prompt styling */
+  .terminal-prompt {
+    @apply relative inline-block;
+  }
+
+  .terminal-prompt::before {
+    content: "$ ";
+    @apply text-accent font-bold;
+  }
+
+  /* Terminal window frame */
+  .terminal-frame {
+    @apply relative border border-primary/50 bg-background rounded-none overflow-hidden;
+    box-shadow: var(--terminal-glow), inset 0 0 20px rgba(0, 255, 0, 0.1);
+  }
+
+  .terminal-header {
+    @apply bg-secondary border-b border-primary/50 px-2 py-1 flex items-center gap-2;
+  }
+
+  .terminal-button {
+    @apply w-3 h-3 rounded-full border border-primary/70;
+  }
+
+  .terminal-button.active {
+    @apply bg-primary;
+  }
+
+  .terminal-content {
+    @apply p-2 text-foreground;
+  }
+
+  /* Monospace text effects */
+  .glitch-text {
+    @apply relative;
+    animation: glow-flicker 0.15s infinite;
+  }
+
+  .code-block {
+    @apply bg-secondary/40 border border-primary/30 p-4 rounded-none overflow-x-auto;
+  }
+
+  .inline-code {
+    @apply bg-secondary/60 px-2 py-1 rounded-none border border-primary/30;
+  }
+
+  /* Command line animation */
+  .cmd-line {
+    @apply relative whitespace-nowrap overflow-hidden;
+  }
+
+  .cmd-line.typing {
+    animation: type 3.5s steps(60, end);
+    width: 100%;
+  }
+
+  .cmd-line::after {
+    content: "█";
+    animation: blink 1s infinite;
+    @apply ml-1;
+  }
+
+  /* Matrix-like effect */
+  .matrix-text {
+    @apply text-accent opacity-60 text-sm;
+  }
+
+  /* CRT monitor effect */
+  .crt-effect {
+    @apply relative;
+  }
+
+  .crt-effect::before {
+    content: "";
+    @apply absolute inset-0 pointer-events-none;
+    background-image: var(--terminal-scanline);
+  }
+
+  /* Terminal frame without green - uses accent color */
+  .terminal-frame-no-green {
+    @apply relative border border-accent/50 bg-background rounded-none overflow-hidden;
+    box-shadow: 0 0 20px rgba(255, 193, 7, 0.2), inset 0 0 20px rgba(255, 193, 7, 0.05);
+    transition: all 0.3s;
+  }
+
+  .terminal-frame-no-green:hover {
+    box-shadow: 0 0 30px rgba(255, 193, 7, 0.3), inset 0 0 20px rgba(255, 193, 7, 0.1);
+    border-color: hsl(var(--accent) / 0.7);
+    transform: translateY(-4px);
+  }
+
+  .terminal-header-no-green {
+    @apply bg-secondary border-b border-accent/50 px-2 py-1 flex items-center gap-2;
+  }
+
+  .terminal-button-no-green {
+    @apply w-3 h-3 rounded-full border border-accent/70;
+  }
+
+  .terminal-button-no-green.active {
+    @apply bg-accent;
+  }
+
+  /* Neon terminal borders */
+  .neon-border {
+    @apply border border-primary/40 shadow-[0_0_12px_rgba(255,255,255,0.12)] hover:border-primary/70 hover:shadow-[0_0_20px_rgba(255,255,255,0.18)] transition-all;
+  }
+
+  .card-hover {
+    @apply transition-all duration-300 hover:shadow-[0_0_24px_rgba(255,255,255,0.16)] hover:border-primary/70 hover:-translate-y-1;
+  }
+
+  /* Added glass-card utility class */
+  .glass-card {
+    @apply bg-background/40 backdrop-blur-md border border-primary/30;
+  }
+
+  /* Added card-shimmer utility */
+  .card-shimmer {
+    background-image: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.06) 50%, rgba(255, 255, 255, 0) 100%);
+    background-size: 200% 100%;
+    animation: card-shimmer 3s infinite;
+  }
+
+  /* Added glow-effect utility */
+  .glow-effect {
+    @apply transition-all duration-300;
+  }
+
+  /* Updated fade-in-up to use proper animation */
+  .fade-in-up {
+    @apply opacity-0 translate-y-10;
+    animation: fade-in-up 0.7s ease-out forwards;
+  }
+
+  .fade-in-up.visible {
+    @apply opacity-100 translate-y-0;
+  }
+
+  /* Animation utilities */
+  .animate-fade-in {
+    animation: fade-in-up 0.5s ease-out;
+  }
+
+  .animate-scan-line {
+    animation: scan-lines 8s linear infinite;
+  }
+
+  /* Adding missing animate-glow-pulse animation */
+  .animate-glow-pulse {
+    animation: glow-pulse-animation 3s ease-in-out infinite;
+  }
+
+  /* Adding missing animate-pulse-glow animation */
+  .animate-pulse-glow {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  /* Adding missing animate-gradient for animated backgrounds */
+  .animate-gradient {
+    background-size: 200% auto;
+    animation: gradient 3s linear infinite;
+  }
+
+  @keyframes gradient {
+    0% {
+      background-position: 0% center;
+    }
+    100% {
+      background-position: 200% center;
+    }
+  }
+
+  @keyframes pulse {
+    0%,
+    100% {
+      opacity: 1;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.12);
+    }
+    50% {
+      opacity: 0.8;
+      box-shadow: 0 0 40px rgba(255, 255, 255, 0.22);
+    }
+  }
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  /* Adding missing animate-pulse-glow-purple for purple accent glow */
+  .animate-pulse-glow-purple {
+    animation: pulse-purple 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes pulse-purple {
+    0%,
+    100% {
+      opacity: 1;
+      box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+    }
+    50% {
+      opacity: 0.8;
+      box-shadow: 0 0 40px rgba(168, 85, 247, 0.6);
+    }
+  }
+
+  /* Adding missing gradient-text utility class */
+  .gradient-text {
+    background: linear-gradient(90deg, #ffffff 0%, #ffffff 50%, #ffd700 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradient 3s linear infinite;
+  }
+
+  /* Adding missing btn-terminal utility class */
+  .btn-terminal {
+    @apply relative inline-flex items-center justify-center px-6 py-3 overflow-hidden font-mono text-sm font-bold rounded-none border border-primary/50 bg-primary text-primary-foreground transition-all duration-300 hover:border-primary hover:shadow-[0_0_16px_rgba(255,255,255,0.18)] hover:bg-primary/90 active:scale-95;
+  }
+
+  /* Adding missing btn-terminal-outline utility class */
+  .btn-terminal-outline {
+    @apply relative inline-flex items-center justify-center px-6 py-3 overflow-hidden font-mono text-sm font-bold rounded-none border border-primary/50 bg-transparent text-primary transition-all duration-300 hover:border-primary hover:shadow-[0_0_16px_rgba(255,255,255,0.18)] hover:bg-primary/10 active:scale-95;
+  }
+}
